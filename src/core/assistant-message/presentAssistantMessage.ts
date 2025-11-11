@@ -615,6 +615,13 @@ export async function presentAssistantMessage(cline: Task) {
 				case "generate_image":
 					await generateImageTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
 					break
+				default: {
+					const errorMsg = `Unknown tool '${block.name}'. Use one of the supported tools listed in the prompt.`
+					console.warn(`[presentAssistantMessage] Unrecognized tool name: ${block.name}`, block)
+					pushToolResult(formatResponse.toolError(errorMsg))
+					cline.recordToolError(block.name as ToolName, errorMsg)
+					break
+				}
 			}
 
 			break
