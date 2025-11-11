@@ -17,6 +17,31 @@ export async function getMcpServersSection(
 	}
 	// kilocode_change end
 
+	const strictUsageReminder = `### MCP Tool Usage Reminder
+
+When using any MCP server tool you **must** call the \`use_mcp_tool\` wrapper and include \`server_name\`, \`tool_name\`, and an \`arguments\` JSON payload. Calling the underlying tool name directly is forbidden and will fail instantly.
+
+❌ Incorrect (do not do this):
+\`\`\`xml
+<get_forecast>
+  <city>San Francisco</city>
+</get_forecast>
+\`\`\`
+
+✅ Correct (required format):
+\`\`\`xml
+<use_mcp_tool>
+  <server_name>weather-server</server_name>
+  <tool_name>get_forecast</tool_name>
+  <arguments>
+  {
+    "city": "San Francisco",
+    "days": 5
+  }
+  </arguments>
+</use_mcp_tool>
+\`\`\``
+
 	const connectedServers =
 		mcpHub.getServers().length > 0
 			? `${mcpHub
@@ -66,6 +91,8 @@ The Model Context Protocol (MCP) enables communication between the system and MC
 # Connected MCP Servers
 
 When a server is connected, you can use the server's tools via the \`use_mcp_tool\` tool, and access the server's resources via the \`access_mcp_resource\` tool.
+
+${strictUsageReminder}
 
 ${connectedServers}`
 
