@@ -5,6 +5,7 @@ import { createAndOpenGitHubIssue } from "../../utils/github-url-utils"
 import { formatResponse } from "../prompts/responses"
 import * as vscode from "vscode"
 import * as os from "os"
+import { Package } from "../../shared/package"
 
 export async function reportBugTool(
 	cline: Task,
@@ -49,7 +50,7 @@ export async function reportBugTool(
 			// Derive system information values algorithmically
 			const operatingSystem = os.platform() + " " + os.release()
 			const kilocodeVersion =
-				vscode.extensions.getExtension("kilocode.kilo-code")?.packageJSON.version || "Unknown"
+				vscode.extensions.getExtension(Package.extensionId)?.packageJSON.version || "Unknown"
 			const systemInfo = `VSCode: ${vscode.version}, Node.js: ${process.version}, Architecture: ${os.arch()}`
 			const providerAndModel = `${(await cline.providerRef.deref()?.contextProxy.getGlobalState("apiProvider")) as string} / ${cline.api.getModel().id}`
 

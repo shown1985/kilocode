@@ -2,8 +2,8 @@
 	"name": "kilo-code",
 	"displayName": "%extension.displayName%",
 	"description": "%extension.description%",
-	"publisher": "kilocode",
-	"version": "4.118.0",
+	"publisher": "shawncode",
+	"version": "4.118.0-merge",
 	"icon": "assets/icons/logo-outline-black.png",
 	"galleryBanner": {
 		"color": "#FFFFFF",

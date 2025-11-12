@@ -227,9 +227,9 @@ When a task is deleted, the following are permanently removed:
 
 Task data is stored in your VS Code global storage location:
 
-- **macOS**: `~/Library/Application Support/Code/User/globalStorage/kilocode.kilo-code/`
-- **Windows**: `%APPDATA%\Code\User\globalStorage\kilocode.kilo-code\`
-- **Linux**: `~/.config/Code/User/globalStorage/kilocode.kilo-code/`
+- **macOS**: `~/Library/Application Support/Code/User/globalStorage/shawncode.kilo-code/`
+- **Windows**: `%APPDATA%\Code\User\globalStorage/shawncode.kilo-code\`
+- **Linux**: `~/.config/Code/User/globalStorage/shawncode.kilo-code/`
 
 ## Privacy & Data Handling
 

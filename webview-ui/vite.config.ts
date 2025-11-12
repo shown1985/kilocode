@@ -99,6 +99,7 @@ export default defineConfig(({ mode }) => {
 			alias: {
 				"@": resolve(__dirname, "./src"),
 				"@src": resolve(__dirname, "./src"),
+				"@roo/modes": resolve(__dirname, "../src/shared/webview-safe-modes.ts"),
 				"@roo": resolve(__dirname, "../src/shared"),
 			},
 		},

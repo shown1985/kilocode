@@ -22,6 +22,7 @@
 		"paths": {
 			"@/*": ["./src/*"],
 			"@src/*": ["./src/*"],
+			"@roo/modes": ["../src/shared/webview-safe-modes.ts"],
 			"@roo/*": ["../src/shared/*"]
 		}
 	},
