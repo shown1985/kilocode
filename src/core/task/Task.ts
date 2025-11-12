@@ -889,8 +889,9 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		// The state is mutable if the message is complete and the task will
 		// block (via the `pWaitFor`).
 		const isBlocking = !(this.askResponse !== undefined || this.lastMessageTs !== askTs)
-		const isMessageQueued = !this.messageQueueService.isEmpty()
-		const isStatusMutable = !partial && isBlocking && !isMessageQueued
+		const hasQueuedMessages = !this.messageQueueService.isEmpty()
+		const canAutoProcessQueuedMessages = hasQueuedMessages && this.canAutoProcessQueuedMessage(type)
+		const isStatusMutable = !partial && isBlocking && !canAutoProcessQueuedMessages
 		let statusMutationTimeouts: NodeJS.Timeout[] = []
 
 		if (isStatusMutable) {
@@ -930,26 +931,16 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					}, 1_000),
 				)
 			}
-		} else if (isMessageQueued) {
+		} else if (canAutoProcessQueuedMessages) {
 			console.log("Task#ask will process message queue")
 
 			const message = this.messageQueueService.dequeueMessage()
 
 			if (message) {
-				// Check if this is a tool approval ask that needs to be handled
-				if (
-					type === "tool" ||
-					type === "command" ||
-					type === "browser_action_launch" ||
-					type === "use_mcp_server"
-				) {
-					// For tool approvals, we need to approve first, then send the message if there's text/images
-					this.handleWebviewAskResponse("yesButtonClicked", message.text, message.images)
-				} else {
-					// For other ask types (like followup), fulfill the ask directly
-					this.setMessageResponse(message.text, message.images)
-				}
+				this.setMessageResponse(message.text, message.images)
 			}
+		} else if (hasQueuedMessages) {
+			console.log("Task#ask has queued user input but waiting for explicit approval response")
 		}
 
 		// Wait for askResponse to be set.
@@ -984,6 +975,20 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 	public setMessageResponse(text: string, images?: string[]) {
 		this.handleWebviewAskResponse("messageResponse", text, images)
+	}
+
+	private canAutoProcessQueuedMessage(type: ClineAsk): boolean {
+		switch (type) {
+			case "tool":
+			case "command":
+			case "browser_action_launch":
+			case "use_mcp_server":
+				// Require explicit user interaction for tool approvals so that queued
+				// guidance is treated as feedback rather than an implicit approval.
+				return false
+			default:
+				return true
+		}
 	}
 
 	handleWebviewAskResponse(askResponse: ClineAskResponse, text?: string, images?: string[]) {
