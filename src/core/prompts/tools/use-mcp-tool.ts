@@ -6,6 +6,37 @@ export function getUseMcpToolDescription(args: ToolArgs): string | undefined {
 	}
 	return `## use_mcp_tool
 Description: Request to use a tool provided by a connected MCP server. Each MCP server can provide multiple tools with different capabilities. Tools have defined input schemas that specify required and optional parameters.
+
+### ⚠️ CRITICAL WARNINGS
+1. **NEVER** call an MCP tool directly (e.g. \`<get_pull_request>\`). You **must** wrap every call with \`use_mcp_tool\`.
+2. \`server_name\`, \`tool_name\`, and \`arguments\` are all **required**. Omitting any field causes an immediate failure.
+3. The \`arguments\` block must contain valid JSON that matches the tool's input schema. Double-check property names and types.
+
+#### Incorrect (❌ Do NOT do this)
+\`\`\`xml
+<get_pull_request>
+  <owner>octocat</owner>
+  <repo>Hello-World</repo>
+  <pullNumber>123</pullNumber>
+</get_pull_request>
+\`\`\`
+This is rejected because it bypasses \`use_mcp_tool\`.
+
+#### Correct (✅ Required format)
+\`\`\`xml
+<use_mcp_tool>
+  <server_name>github</server_name>
+  <tool_name>get_pull_request</tool_name>
+  <arguments>
+  {
+    "owner": "octocat",
+    "repo": "Hello-World",
+    "pullNumber": 123
+  }
+  </arguments>
+</use_mcp_tool>
+\`\`\`
+
 Parameters:
 - server_name: (required) The name of the MCP server providing the tool
 - tool_name: (required) The name of the tool to execute
